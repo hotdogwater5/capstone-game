@@ -203,9 +203,6 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     true
     )
 })
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, otherSprite) {
-	
-})
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
     Girl,
