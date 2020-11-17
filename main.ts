@@ -138,6 +138,12 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     true
     )
 })
+info.onCountdownEnd(function () {
+	
+})
+statusbars.onZero(StatusBarKind.Health, function (status) {
+    game.over(false, effects.melt)
+})
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
     Girl,
@@ -196,6 +202,9 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     200,
     true
     )
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, otherSprite) {
+	
 })
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
@@ -258,21 +267,18 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 let Moving = false
 let Girl: Sprite = null
-tiles.setTilemap(tiles.createTilemap(hex`0d000d0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000`, img`
-    2 2 2 2 2 2 2 2 2 2 2 2 2 
-    2 . . . . . . . . . 2 . 2 
-    2 . . . . . . . . . 2 . 2 
-    2 . . . . . . . . . 2 . 2 
-    2 . . . . . . . . . 2 . 2 
-    2 . . . . . . . . . 2 . 2 
-    2 . . . . . . . . . 2 . 2 
-    2 . . . . . . . . . 2 . 2 
-    2 2 2 2 2 2 2 2 2 2 2 . 2 
-    2 2 2 2 2 2 2 2 2 2 2 . 2 
-    2 2 2 2 2 2 2 2 2 2 2 . 2 
-    2 . . . . . . . . . . . 2 
-    2 2 2 2 2 2 2 2 2 2 2 2 2 
-    `, [myTiles.transparency16], TileScale.Sixteen))
+tiles.setTilemap(tiles.createTilemap(hex`0a000a0005060606060606060607040909090909090909080409090909090909090804090909090909090908040909090909090909080409090909090909090804090909090909090908040909090909090909080409090909090909090803020202020202020201`, img`
+    2 2 2 2 2 2 2 2 2 2 
+    2 . . . . . . . . 2 
+    2 . . . . . . . . 2 
+    2 . . . . . . . . 2 
+    2 . . . . . . . . 2 
+    2 . . . . . . . . 2 
+    2 . . . . . . . . 2 
+    2 . . . . . . . . 2 
+    2 . . . . . . . . 2 
+    2 2 2 2 2 2 2 2 2 2 
+    `, [myTiles.transparency16,sprites.dungeon.darkGroundSouthEast0,sprites.dungeon.darkGroundSouth,sprites.dungeon.darkGroundSouthWest0,sprites.dungeon.darkGroundWest,sprites.dungeon.darkGroundNorthWest0,sprites.dungeon.darkGroundNorth,sprites.dungeon.darkGroundNorthEast0,sprites.dungeon.darkGroundEast,sprites.dungeon.darkGroundCenter], TileScale.Sixteen))
 scene.setBackgroundColor(3)
 Girl = sprites.create(img`
     . . . . . . . . . . . . . . . . 
@@ -292,7 +298,44 @@ Girl = sprites.create(img`
     . . . f f f f f f f f f f . . . 
     . . . . . f f . . f f . . . . . 
     `, SpriteKind.Player)
+let mySprite = sprites.create(img`
+    ...bbbbbbbbbb...
+    ..b1111111111b..
+    .b111111111111b.
+    .b111111111111b.
+    .bddccccccccddb.
+    .bdc66666666cdb.
+    .bdc61d66666cdb.
+    .bdc6d666666cdb.
+    .bdc66666666cdb.
+    .bdc66666666cdb.
+    .bdc66666666cdb.
+    .bddccccccccddb.
+    .cbbbbbbbbbbbbc.
+    .cccccccccccccc.
+    .bbbbbbbbbbbbbb.
+    .bcdddddddddddb.
+    .bcbbbbbbbbbbcb.
+    .bcbbbbbbbbbbcb.
+    .bccccccccccccb.
+    .bbbbbbbbbbbbbb.
+    .b............b.
+    ................
+    `, SpriteKind.Projectile)
+scene.cameraFollowSprite(Girl)
 controller.moveSprite(Girl, 50, 50)
+game.showLongText("Lets finish our homework.", DialogLayout.Bottom)
+game.showLongText("Walk up to the computer to do your homework.", DialogLayout.Bottom)
+let Computer_Work = statusbars.create(20, 4, StatusBarKind.Energy)
+Computer_Work.attachToSprite(mySprite)
+Computer_Work.value = 1
+game.showLongText("This is your work, finish it all until the timer runs out!", DialogLayout.Bottom)
+let Stress = statusbars.create(20, 4, StatusBarKind.Health)
+Stress.attachToSprite(Girl)
+Stress.value = 100
+game.showLongText("This is your stress bar. Go listen to music if it gets to low.", DialogLayout.Bottom)
+game.showLongText("The timer shows how much time you have left. Finish your work before then.", DialogLayout.Bottom)
+info.startCountdown(60)
 game.onUpdate(function () {
     Moving = controller.up.isPressed() || (controller.down.isPressed() || (controller.left.isPressed() || controller.right.isPressed()))
     if (!(Moving)) {
