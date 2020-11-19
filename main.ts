@@ -139,7 +139,12 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     )
 })
 info.onCountdownEnd(function () {
-	
+    if (Computer_Work.value < 100) {
+        game.over(false, effects.melt)
+    } else {
+        game.over(true, effects.confetti)
+        game.reset()
+    }
 })
 statusbars.onZero(StatusBarKind.Health, function (status) {
     game.over(false, effects.melt)
@@ -262,7 +267,11 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     true
     )
 })
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite, otherSprite) {
+    music.playMelody("B A G A G F A C5 ", 300)
+})
 let Moving = false
+let Computer_Work: StatusBarSprite = null
 let Girl: Sprite = null
 tiles.setTilemap(tiles.createTilemap(hex`0a000a0005060606060606060607040909090909090909080409090909090909090804090909090909090908040909090909090909080409090909090909090804090909090909090908040909090909090909080409090909090909090803020202020202020201`, img`
     2 2 2 2 2 2 2 2 2 2 
@@ -295,6 +304,7 @@ Girl = sprites.create(img`
     . . . f f f f f f f f f f . . . 
     . . . . . f f . . f f . . . . . 
     `, SpriteKind.Player)
+Girl.setPosition(72, 79)
 let mySprite = sprites.create(img`
     ...bbbbbbbbbb...
     ..b1111111111b..
@@ -319,17 +329,37 @@ let mySprite = sprites.create(img`
     .b............b.
     ................
     `, SpriteKind.Projectile)
+mySprite.setPosition(75, 19)
+let mySprite2 = sprites.create(img`
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . c c c c c c c c c c c c . . . 
+    c 1 1 1 1 1 1 1 1 1 1 1 1 c . . 
+    c d d d d d d d d d d d d c . . 
+    c d c c c c c c c c c c d c . . 
+    c d b d b b b b b b b b d c . . 
+    c d b b b b b b b b b b d c . . 
+    c d b b b b b b b b b b d c . . 
+    c d b b b b b b b b b b d c . . 
+    c 1 b b b b b b b b b b 1 c . . 
+    c 1 1 d 1 1 d 1 1 d 1 1 1 c . . 
+    c 1 d d d d d d d d d d 1 c . . 
+    c 1 d 1 1 d 1 1 d 1 1 d 1 c . . 
+    c b b b b b b b b b b b b c . . 
+    c c c c c c c c c c c c c c . . 
+    `, SpriteKind.Food)
+mySprite2.setPosition(25, 99)
 scene.cameraFollowSprite(Girl)
 controller.moveSprite(Girl, 50, 50)
 game.showLongText("Lets finish our homework.", DialogLayout.Bottom)
 game.showLongText("Walk up to the computer to do your homework.", DialogLayout.Bottom)
-let Computer_Work = statusbars.create(20, 4, StatusBarKind.Energy)
+Computer_Work = statusbars.create(20, 4, StatusBarKind.Energy)
 Computer_Work.attachToSprite(mySprite)
 Computer_Work.value = 1
 game.showLongText("This is your work, finish it all until the timer runs out!", DialogLayout.Bottom)
 let Stress = statusbars.create(20, 4, StatusBarKind.Health)
 Stress.attachToSprite(Girl)
-Stress.value = 100
+Stress.value = 10
 game.showLongText("This is your stress bar. Go listen to music if it gets to low.", DialogLayout.Bottom)
 game.showLongText("The timer shows how much time you have left. Finish your work before then.", DialogLayout.Bottom)
 info.startCountdown(60)
